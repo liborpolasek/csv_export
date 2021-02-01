@@ -3,7 +3,12 @@ package com.polasek.csv_export.table_manager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.polasek.csv_export.Constants.ALPHABETICALLY_BY_VENDOR;
+import static com.polasek.csv_export.Constants.NUMERIC_BY_UNITS;
 
 public class Table {
 
@@ -14,17 +19,15 @@ public class Table {
     private final int sharePos = 4;
     private final int totalPercentage = 100;
 
-    private List<List<String>> rows;
     private List<List<String>> parsedRows;
     private float totalUnits = 0;
 
     public Table(List<List<String>> rows) {
         this.parsedRows = new ArrayList<>();
-        this.rows = rows;
-        calculateShare();
+        calculateShare(rows);
     }
 
-    private void calculateShare() {
+    private void calculateShare(List<List<String>> rows) {
         for(List<String> row : rows) {
             this.totalUnits += Float.parseFloat(row.get(this.unitPos));
         }
@@ -45,10 +48,6 @@ public class Table {
         }
     }
 
-    public List<List<String>> getParsedRows() {
-        return this.parsedRows;
-    }
-
     public List<Double> getSoldUnits(String vendor) {
         List<Double> soldUnits = new ArrayList<>();
         for(List<String> l : this.parsedRows) {
@@ -64,15 +63,32 @@ public class Table {
     public int getNumberOfRow(String vendor) {
         for(int i = 0; i < this.parsedRows.size(); i++) {
             if(this.parsedRows.get(i).get(this.vendorPos).equals(vendor)) {
-                return i;
+                return i + 1;
             }
         }
         return -1;
     }
 
-    public Table sortRowsAlphabetically() {
-        List<List<String>> sorted = this.rows;
-        this.rows.sort(new VendorComparator<>());
+    public Table sortRowsByCondition(int condition, boolean ascOrder) {
+        List<List<String>> sorted = new ArrayList<>(this.parsedRows);
+        switch(condition) {
+            case(ALPHABETICALLY_BY_VENDOR):
+                sorted = sorted.stream()
+                    .sorted(Comparator.comparing(o -> o.get(vendorPos).toLowerCase()))
+                    .collect(Collectors.toList());
+                break;
+            case(NUMERIC_BY_UNITS):
+                sorted = sorted.stream()
+                    .sorted(Comparator.comparingDouble(o -> Double.parseDouble(o.get(unitPos))))
+                    .collect(Collectors.toList());
+                break;
+            default:
+                break;
+        }
+        if(!ascOrder) {
+            Collections.reverse(sorted);
+        }
         return new Table(sorted);
     }
+
 }

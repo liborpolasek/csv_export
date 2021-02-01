@@ -57,31 +57,4 @@ public class FileManager {
         return new Table(filteredContent);
     }
 
-    public void getData(String nameOfColumn, String Column, List<String> columns) {
-        int cPosition = getPosition(nameOfColumn);
-        int[] columnsPositions = new int[columns.size()];
-        for(int i = 0; i < columns.size(); i++) {
-            columnsPositions[i] = getPosition(columns.get(i));
-        }
-        //if(cPosition == -1) return new ArrayList<>();
-
-        ArrayList<String[]> data = new ArrayList<>();
-        for(int i = 0; i < this.content.size(); i++) {
-            if(this.content.get(i)[cPosition].equals(Column)) {/*
-                data.add(Arrays.asList(columnsPositions).stream()
-                        .map(Arrays.asList(this.content.get(i))::get)
-                        .collect(Collectors.toList()));*/
-            }
-        }
-    }
-
-    private int getPosition(String column) {
-        for(int i = 0; i < this.header.length; i++) {
-            if(this.header[i].equals(column)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
 }
