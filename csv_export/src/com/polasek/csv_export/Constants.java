@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.polasek.csv_export.table_manager.Table;
 
+/**
+ * Stores constants for application.
+ */
 public class Constants {
 
     public final static int ALPHABETICALLY_BY_VENDOR = 1;
